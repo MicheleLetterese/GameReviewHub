@@ -3,21 +3,21 @@ package Model;
 public class Review {
     private String idReview;
     private String idGame;
-    private int criticScore;
-    private int criticCount;
-    private int userScore;
-    private int userCount;
+    private double criticScore;
+    private double criticCount;
+    private double userScore;
+    private double userCount;
 
-    public Review() {
-    }
-
-    public Review(String idReview, String idGame, int criticScore, int criticCount, int userScore, int userCount) {
+    public Review(String idReview, String idGame, double criticScore, double criticCount, double userScore, double userCount) {
         this.idReview = idReview;
         this.idGame = idGame;
         this.criticScore = criticScore;
         this.criticCount = criticCount;
         this.userScore = userScore;
         this.userCount = userCount;
+    }
+
+    public Review() {
     }
 
     public String getIdReview() {
@@ -36,35 +36,35 @@ public class Review {
         this.idGame = idGame;
     }
 
-    public int getCriticScore() {
+    public double getCriticScore() {
         return criticScore;
     }
 
-    public void setCriticScore(int criticScore) {
+    public void setCriticScore(double criticScore) {
         this.criticScore = criticScore;
     }
 
-    public int getCriticCount() {
+    public double getCriticCount() {
         return criticCount;
     }
 
-    public void setCriticCount(int criticCount) {
+    public void setCriticCount(double criticCount) {
         this.criticCount = criticCount;
     }
 
-    public int getUserScore() {
+    public double getUserScore() {
         return userScore;
     }
 
-    public void setUserScore(int userScore) {
+    public void setUserScore(double userScore) {
         this.userScore = userScore;
     }
 
-    public int getUserCount() {
+    public double getUserCount() {
         return userCount;
     }
 
-    public void setUserCount(int userCount) {
+    public void setUserCount(double userCount) {
         this.userCount = userCount;
     }
 

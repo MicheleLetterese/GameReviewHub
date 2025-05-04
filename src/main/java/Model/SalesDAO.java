@@ -33,16 +33,42 @@ public class SalesDAO {
 
         try {
             for (Document doc : collection.find().limit(10)) {
+                Object object;
+
                 String idSales = doc.getString("id_sales");
                 String idGame = doc.getString("id_game");
 
-                double naSales = doc.getDouble("na_sales") != null ? doc.getDouble("na_sales") : 0.0;
-                double euSales = doc.getDouble("eu_sales") != null ? doc.getDouble("eu_sales") : 0.0;
-                double jpSales = doc.getDouble("jp_sales") != null ? doc.getDouble("jp_sales") : 0.0;
-                double otherSales = doc.getDouble("other_sales") != null ? doc.getDouble("other_sales") : 0.0;
-                double globalSales = doc.getDouble("global_sales") != null ? doc.getDouble("global_sales") : 0.0;
+                object = doc.get("na_sales");
+                double na_sales;
+                if(object instanceof Double) na_sales = doc.getDouble("na_sales");
+                else if(object instanceof Integer) na_sales = doc.getInteger("na_sales");
+                else na_sales = 0;
 
-                Sales s = new Sales(idSales, idGame, naSales, euSales, jpSales, otherSales, globalSales);
+                object = doc.get("eu_sales");
+                double eu_sales;
+                if(object instanceof Double) eu_sales = doc.getDouble("eu_sales");
+                else if(object instanceof Integer) eu_sales = doc.getInteger("eu_sales");
+                else eu_sales = 0;
+
+                object = doc.get("jp_sales");
+                double jp_sales;
+                if(object instanceof Double) jp_sales = doc.getDouble("jp_sales");
+                else if(object instanceof Integer) jp_sales = doc.getInteger("jp_sales");
+                else jp_sales = 0;
+
+                object = doc.get("other_sales");
+                double other_sales;
+                if(object instanceof Double) other_sales = doc.getDouble("other_sales");
+                else if(object instanceof Integer) other_sales = doc.getInteger("other_sales");
+                else other_sales = 0;
+
+                object = doc.get("global_sales");
+                double global_sales;
+                if(object instanceof Double) global_sales = doc.getDouble("global_sales");
+                else if(object instanceof Integer) global_sales = doc.getInteger("global_sales");
+                else global_sales = 0;
+
+                Sales s = new Sales(idSales, idGame, na_sales, eu_sales, jp_sales, other_sales, global_sales);
                 salesList.add(s);
             }
             System.out.println("Recuperati " + salesList.size() + "sales");

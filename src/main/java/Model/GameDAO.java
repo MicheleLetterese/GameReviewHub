@@ -35,7 +35,6 @@ public class GameDAO {
             for (Document doc : collection.find().limit(10)) {
                 String idGame = doc.getString("id_game");
                 String name = doc.getString("name");
-                System.out.println("Nome: " + name);
                 String platform = doc.getString("platform");
                 int yearOfRelease = doc.getInteger("year_of_release", 0);
                 String genre = doc.getString("genre");
@@ -44,6 +43,7 @@ public class GameDAO {
                 String rating = doc.getString("rating");
 
                 Game game = new Game(idGame, name, platform, yearOfRelease, genre, publisher, developer, rating);
+                game.toString();
 
                 games.add(game);
             }
