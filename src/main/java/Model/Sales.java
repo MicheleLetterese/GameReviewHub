@@ -9,6 +9,9 @@ public class Sales {
     private double otherSales;
     private double globalSales;
 
+    public Sales() {
+    }
+
     public Sales(String idSales, String idGame, double naSales, double euSales,
                  double jpSales, double otherSales, double globalSales) {
         this.idSales = idSales;

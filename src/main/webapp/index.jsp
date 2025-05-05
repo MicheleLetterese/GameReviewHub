@@ -624,7 +624,7 @@
                                     <a href="edit-game-form.jsp?id=<%= game.getIdGame() %>" class="btn btn-action btn-edit" data-bs-toggle="tooltip" title="Modifica">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="delete-game.jsp?id=<%= game.getIdGame() %>" class="btn btn-action btn-delete" onclick="return confirm('Sei sicuro di voler eliminare questo gioco?');" data-bs-toggle="tooltip" title="Elimina">
+                                    <a href="Delete?id=<%= game.getIdGame() %>" class="btn btn-action btn-delete" onclick="return confirm('Sei sicuro di voler eliminare questo gioco?');" data-bs-toggle="tooltip" title="Elimina">
                                         <i class="fas fa-trash-alt"></i>
                                     </a>
                                 </div>

@@ -28,6 +28,23 @@ public class ReviewDAO {
         }
     }
 
+    public void insertReview(Review review, String id_game){
+        try{
+            Document doc = new Document("id_review", review.getIdReview())
+                    .append("id_game", id_game)
+                    .append("critic_score", review.getCriticScore())
+                    .append("critic_count", review.getCriticCount())
+                    .append("user_score", review.getUserScore())
+                    .append("user_count", review.getUserCount());
+
+            System.out.println("DEBUG: Salvataggio review con ID: " + review.getIdReview());
+            collection.insertOne(doc);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException("Errore durante l'inserimento della review", e);
+        }
+    }
+
     public ArrayList<Review> getAllReview() {
         ArrayList<Review> reviews = new ArrayList<>();
 

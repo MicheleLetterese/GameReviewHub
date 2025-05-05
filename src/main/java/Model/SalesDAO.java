@@ -28,6 +28,24 @@ public class SalesDAO {
         }
     }
 
+    public void insertSales(Sales sales, String id_game){
+        try{
+            Document doc = new Document("id_sales", sales.getIdSales())
+                    .append("id_game", id_game)
+                    .append("na_sales", sales.getNaSales())
+                    .append("eu_sales", sales.getEuSales())
+                    .append("jp_sales", sales.getJpSales())
+                    .append("other_sales", sales.getOtherSales())
+                    .append("global_sales", sales.getGlobalSales());
+
+            System.out.println("DEBUG: Salvataggio sales con ID: " + sales.getIdSales());
+            collection.insertOne(doc);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException("Errore durante l'inserimento del sales");
+        }
+    }
+
     public ArrayList<Sales> getAllSales() {
         ArrayList<Sales> salesList = new ArrayList<>();
 

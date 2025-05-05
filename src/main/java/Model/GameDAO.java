@@ -4,9 +4,13 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.DeleteResult;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
+
+import static com.mongodb.client.model.Filters.eq;
 
 public class GameDAO {
     private static final String CONNECTION_STRING = "mongodb+srv://micheleletterese2:UomoNegro22cm@games.vycnrmi.mongodb.net/?retryWrites=true&w=majority&appName=games";
@@ -25,6 +29,39 @@ public class GameDAO {
             System.out.println("DEBUG: Connessione a MongoDB inizializzata.");
         } catch (Exception e) {
             throw new RuntimeException("Errore durante la connessione a MongoDB", e);
+        }
+    }
+
+    public void insertGame(Game game){
+        try{
+            Document doc = new Document("id_game", game.getIdGame())
+                    .append("name", game.getName())
+                    .append("platform", game.getPlatform())
+                    .append("year_of_release", game.getYearOfRelease())
+                    .append("genre", game.getGenre())
+                    .append("publisher", game.getPublisher())
+                    .append("developer", game.getDeveloper())
+                    .append("rating", game.getRating());
+
+            System.out.println("DEBUG: Salvataggio game con ID: " + game.getIdGame());
+            collection.insertOne(doc);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException("Errore durante l'inserimento del gioco");
+        }
+    }
+
+    public void deleteGame(ObjectId objectId){
+        try{
+            DeleteResult result = collection.deleteOne(eq("id_game", objectId));
+            if(result.getDeletedCount() == 0){
+                throw new RuntimeException("Nessun game trovatp con l'ID specificato: " + objectId);
+            }
+            System.out.println("DEBUG: Game eliminato con successo, ID: " + objectId);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException("Errore durante l'eiminazione del game", e);
         }
     }
 

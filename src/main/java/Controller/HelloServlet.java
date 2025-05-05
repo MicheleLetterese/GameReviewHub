@@ -1,7 +1,6 @@
 package Controller;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import Model.*;
@@ -14,7 +13,6 @@ import jakarta.servlet.annotation.*;
 public class HelloServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("Entro");
         GameDAO gameDAO = new GameDAO();
         ReviewDAO reviewDAO = new ReviewDAO();
         SalesDAO salesDAO = new SalesDAO();
