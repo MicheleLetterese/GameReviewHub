@@ -66,31 +66,23 @@ public class GameDAO {
     }
 
     public ArrayList<Game> getAllGames(){
-        System.out.println("Entro in getAllGames");
         ArrayList<Game> games = new ArrayList<>();
-        System.out.println("getAllGames2");
         try {
-            System.out.println("getAllGames3");
             for (Document doc : collection.find().limit(10)) {
-                System.out.println("Entro nel for");
-                String idGame = doc.getString("id_game");
-                System.out.println("game: " + idGame);
+                String idGame = String.valueOf(doc.get("id_game"));
                 String name = doc.getString("name");
-                System.out.println("game: " + name);
                 String platform = doc.getString("platform");
                 int yearOfRelease = doc.getInteger("year_of_release", 0);
-                System.out.println("game: " + yearOfRelease);
                 String genre = doc.getString("genre");
                 String publisher = doc.getString("publisher");
                 String developer = doc.getString("developer");
                 String rating = doc.getString("rating");
 
                 Game game = new Game(idGame, name, platform, yearOfRelease, genre, publisher, developer, rating);
-                //game.toString();
 
                 games.add(game);
             }
-            System.out.println("Recuperati " + games.size() + "games");
+            System.out.println("Recuperati " + games.size() + " games");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,4 +90,5 @@ public class GameDAO {
         }
         return games;
     }
+
 }

@@ -569,7 +569,6 @@
                     <table class="table table-custom table-games" id="gamesTable">
                         <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Nome</th>
                             <th>Piattaforma</th>
                             <th>Anno</th>
@@ -608,7 +607,6 @@
                                     }
                         %>
                         <tr>
-                            <td><%= game.getIdGame() %></td>
                             <td><strong><%= game.getName() %></strong></td>
                             <td><span class="badge badge-platform"><%= game.getPlatform() %></span></td>
                             <td><span class="badge badge-year"><%= game.getYearOfRelease() %></span></td>
@@ -664,8 +662,6 @@
                     <table class="table table-custom table-reviews" id="reviewsTable">
                         <thead>
                         <tr>
-                            <th>ID Recensione</th>
-                            <th>ID Gioco</th>
                             <th>Nome Gioco</th>
                             <th>Punteggio Critica</th>
                             <th>Conteggio Critica</th>
@@ -680,7 +676,9 @@
                                     String gameName = "N/D";
                                     if (games != null) {
                                         for (Game game : games) {
+                                            System.out.println("game: " + game.getName() + " con id: " + game.getIdGame() + " e idReview = " + review.getIdGame());
                                             if (game.getIdGame() == review.getIdGame()) {
+                                                System.out.println("Entro nell'if. game.getIdGame() = " + game.getIdGame() + " review.getIdGame = " + review.getIdGame());
                                                 gameName = game.getName();
                                                 break;
                                             }
@@ -698,8 +696,6 @@
                                     else userScoreClass = "text-danger";
                         %>
                         <tr>
-                            <td><%= review.getIdReview() %></td>
-                            <td><%= review.getIdGame() %></td>
                             <td><strong><%= gameName %></strong></td>
                             <td class="<%= criticScoreClass %>"><strong><%= review.getCriticScore() %></strong>/100</td>
                             <td><%= review.getCriticCount() %> recensioni</td>
@@ -740,8 +736,6 @@
                     <table class="table table-custom table-sales" id="salesTable">
                         <thead>
                         <tr>
-                            <th>ID Vendita</th>
-                            <th>ID Gioco</th>
                             <th>Nome Gioco</th>
                             <th>Nord America</th>
                             <th>Europa</th>
@@ -765,8 +759,6 @@
                                     }
                         %>
                         <tr>
-                            <td><%= s.getIdSales() %></td>
-                            <td><%= s.getIdGame() %></td>
                             <td><strong><%= gameName %></strong></td>
                             <td><i class="fas fa-dollar-sign me-1 text-success"></i> <%= s.getNaSales() %> mil</td>
                             <td><i class="fas fa-euro-sign me-1 text-primary"></i> <%= s.getEuSales() %> mil</td>

@@ -51,8 +51,8 @@ public class ReviewDAO {
         try {
             for (Document doc : collection.find().limit(10)) {
                 Object object;
-                String idReview = doc.getString("id_review");
-                String idGame = doc.getString("id_game");
+                String idReview = String.valueOf(doc.get("id_review"));
+                String idGame = String.valueOf(doc.get("id_game"));
 
                 object = doc.get("critic_score");
                 double critic_score;

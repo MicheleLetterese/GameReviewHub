@@ -53,8 +53,8 @@ public class SalesDAO {
             for (Document doc : collection.find().limit(10)) {
                 Object object;
 
-                String idSales = doc.getString("id_sales");
-                String idGame = doc.getString("id_game");
+                String idSales = String.valueOf(doc.get("id_sales"));
+                String idGame = String.valueOf(doc.get("id_game"));
 
                 object = doc.get("na_sales");
                 double na_sales;
