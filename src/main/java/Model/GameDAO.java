@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import static com.mongodb.client.model.Filters.eq;
 
 public class GameDAO {
-    private static final String CONNECTION_STRING = "mongodb+srv://micheleletterese2:UomoNegro22cm@games.vycnrmi.mongodb.net/?retryWrites=true&w=majority&appName=games";
+    private static final String CONNECTION_STRING = "mongodb+srv://micheleletterese2:progettoDB@games.vycnrmi.mongodb.net/?retryWrites=true&w=majority&appName=games";
     private static final String DATABASE_NAME = "GameReviewHub";
     private static final String COLLECTION_NAME = "game";
 
@@ -65,6 +65,46 @@ public class GameDAO {
         }
     }
 
+    public ArrayList<Game> getGamesPaginated(int skip, int limit) {
+        ArrayList<Game> games = new ArrayList<>();
+        try {
+            for (Document doc : collection.find().skip(skip).limit(limit)) {
+                String idGame = String.valueOf(doc.get("id_game"));
+                String name = doc.getString("name");
+                String platform = doc.getString("platform");
+                Object object = doc.get("year_of_release");
+                int yearOfRelease = 0;
+                if(object instanceof String) yearOfRelease = 0;
+                else if(object instanceof Integer) yearOfRelease = doc.getInteger("year_of_release");
+                //int yearOfRelease = doc.getInteger("year_of_release", 0);
+                String genre = doc.getString("genre");
+                String publisher = doc.getString("publisher");
+                String developer = doc.getString("developer");
+                String rating = doc.getString("rating");
+
+                Game game = new Game(idGame, name, platform, yearOfRelease, genre, publisher, developer, rating);
+                games.add(game);
+            }
+            System.out.println("Recuperati " + games.size() + " giochi (skip=" + skip + ", limit=" + limit + ")");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Errore durante il recupero dei giochi con paginazione");
+        }
+        return games;
+    }
+
+    public long getTotalGamesCount() {
+        try {
+            // Conta il numero totale di documenti nella collezione dei giochi
+            return collection.countDocuments();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Errore durante il conteggio dei giochi");
+        }
+    }
+
+    /*
     public ArrayList<Game> getAllGames(){
         ArrayList<Game> games = new ArrayList<>();
         try {
@@ -90,5 +130,5 @@ public class GameDAO {
         }
         return games;
     }
-
+*/
 }

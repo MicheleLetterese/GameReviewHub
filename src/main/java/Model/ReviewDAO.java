@@ -9,7 +9,7 @@ import org.bson.Document;
 import java.util.ArrayList;
 
 public class ReviewDAO {
-    private static final String CONNECTION_STRING = "mongodb+srv://micheleletterese2:UomoNegro22cm@games.vycnrmi.mongodb.net/?retryWrites=true&w=majority&appName=games";
+    private static final String CONNECTION_STRING = "mongodb+srv://micheleletterese2:progettoDB@games.vycnrmi.mongodb.net/?retryWrites=true&w=majority&appName=games";
     private static final String DATABASE_NAME = "GameReviewHub";
     private static final String COLLECTION_NAME = "review";
 
@@ -45,6 +45,69 @@ public class ReviewDAO {
         }
     }
 
+    public ArrayList<Review> getReviewsPaginated(int skip, int limit) {
+        ArrayList<Review> reviews = new ArrayList<>();
+
+        try {
+            for (Document doc : collection.find().skip(skip).limit(limit)) {
+                Object object;
+
+                String idReview = String.valueOf(doc.get("id_review"));
+                String idGame = String.valueOf(doc.get("id_game"));
+
+                object = doc.get("critic_score");
+                double critic_score;
+                if (object instanceof String) critic_score = 0;
+                else if (object instanceof Integer) critic_score = doc.getInteger("critic_score");
+                else if (object instanceof Double) critic_score = doc.getDouble("critic_score");
+                else critic_score = 0;
+
+                object = doc.get("critic_count");
+                double critic_count;
+                if (object instanceof String) critic_count = 0;
+                else if (object instanceof Integer) critic_count = doc.getInteger("critic_count");
+                else if (object instanceof Double) critic_count = doc.getDouble("critic_count");
+                else critic_count = 0;
+
+                object = doc.get("user_score");
+                double user_score = 0;
+                if (object instanceof String) user_score = 0;
+                else if (object instanceof Integer) user_score = doc.getInteger("user_score");
+                else if (object instanceof Double) user_score = doc.getDouble("user_score");
+                else user_score = 0;
+
+                object = doc.get("user_count");
+                double user_count;
+                if (object instanceof String) user_count = 0;
+                else if (object instanceof Integer) user_count = doc.getInteger("user_count");
+                else if (object instanceof Double) user_count = doc.getDouble("user_count");
+                else user_count = 0;
+
+                Review review = new Review(idReview, idGame, critic_score, critic_count, user_score, user_count);
+                reviews.add(review);
+            }
+
+            System.out.println("Recuperate " + reviews.size() + " recensioni (skip=" + skip + ", limit=" + limit + ")");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Errore durante il recupero delle recensioni con paginazione");
+        }
+
+        return reviews;
+    }
+
+    public long getTotalReviewsCount() {
+        try {
+            // Conta il numero totale di documenti nella collezione delle recensioni
+            return collection.countDocuments();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Errore durante il conteggio delle recensioni");
+        }
+    }
+
+
+    /*
     public ArrayList<Review> getAllReview() {
         ArrayList<Review> reviews = new ArrayList<>();
 
@@ -94,6 +157,6 @@ public class ReviewDAO {
 
         return reviews;
     }
-
+*/
 
 }
