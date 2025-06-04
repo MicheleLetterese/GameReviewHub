@@ -619,7 +619,7 @@
                                     <a href="GameDetails?id=<%= game.getIdGame() %>" class="btn btn-action" style="background-color: var(--accent-color); color: white;" data-bs-toggle="tooltip" title="Dettagli">
                                         <i class="fas fa-info-circle"></i>
                                     </a>
-                                    <a href="update.jsp" class="btn btn-action btn-edit" data-bs-toggle="tooltip" title="Modifica">
+                                    <a href="Update?idGame=<%= game.getIdGame() %>" class="btn btn-action btn-edit" data-bs-toggle="tooltip" title="Modifica">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <a href="Delete?idGame=<%= game.getIdGame() %>" class="btn btn-action btn-delete" onclick="return confirm('Sei sicuro di voler eliminare questo gioco?');" data-bs-toggle="tooltip" title="Elimina">
@@ -778,7 +778,78 @@
                     </table>
                 </div>
             </div>
+
+        <!-- Pagination Section -->
+        <div class="section fade-in-delay-3">
+            <div class="pagination-container text-center">
+                <%
+                    int currentPage = (Integer) request.getAttribute("currentPage");
+                    int totalGamePages = (Integer) request.getAttribute("totalGamePages");
+                    // Utilizziamo il numero maggiore di pagine tra le tre tabelle per la paginazione
+                    int maxPages = Math.max(totalGamePages,
+                            Math.max((Integer) request.getAttribute("totalReviewPages"),
+                                    (Integer) request.getAttribute("totalSalesPages")));
+                %>
+                <nav aria-label="Navigazione pagine">
+                    <ul class="pagination pagination-lg justify-content-center">
+                        <!-- Previous button -->
+                        <li class="page-item <%= currentPage == 1 ? "disabled" : "" %>">
+                            <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Precedente">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+
+                        <!-- First page button -->
+                        <li class="page-item <%= currentPage == 1 ? "active" : "" %>">
+                            <a class="page-link" href="?page=1">1</a>
+                        </li>
+
+                        <!-- Ellipsis for many pages before -->
+                        <% if (currentPage > 4) { %>
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                        <% } %>
+
+                        <!-- Show 2 pages before and 2 pages after current page -->
+                        <%
+                            for (int i = Math.max(2, currentPage - 2); i <= Math.min(maxPages - 1, currentPage + 2); i++) {
+                                if (i == 1 || i == maxPages) continue; // Skip first and last page as they're displayed separately
+                        %>
+                        <li class="page-item <%= currentPage == i ? "active" : "" %>">
+                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                        </li>
+                        <% } %>
+
+                        <!-- Ellipsis for many pages after -->
+                        <% if (currentPage < maxPages - 3) { %>
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                        <% } %>
+
+                        <!-- Last page button (if more than 1 page) -->
+                        <% if (maxPages > 1) { %>
+                        <li class="page-item <%= currentPage == maxPages ? "active" : "" %>">
+                            <a class="page-link" href="?page=<%= maxPages %>"><%= maxPages %></a>
+                        </li>
+                        <% } %>
+
+                        <!-- Next button -->
+                        <li class="page-item <%= currentPage == maxPages ? "disabled" : "" %>">
+                            <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Successivo">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="pagination-info text-muted mt-2">
+                    Pagina <%= currentPage %> di <%= maxPages %>
+                </div>
+            </div>
         </div>
+    </div>
 
         <!-- Individual Tab Contents -->
         <div class="tab-pane fade" id="games-tab-content" role="tabpanel">
@@ -821,6 +892,15 @@
                         <i class="fas fa-plus me-2"></i> Aggiungi Nuovo Gioco
                     </a>
                 </div>
+
+                <!-- Pagination Section for Games Tab -->
+                <div class="pagination-container text-center mt-4">
+                    <nav aria-label="Navigazione pagine giochi">
+                        <ul class="pagination pagination-lg justify-content-center" id="gamesPagination">
+                            <!-- Populated by JavaScript -->
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
 
@@ -855,6 +935,15 @@
                         <!-- Stessi dati della tabella principale -->
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Pagination Section for Reviews Tab -->
+                <div class="pagination-container text-center mt-4">
+                    <nav aria-label="Navigazione pagine recensioni">
+                        <ul class="pagination pagination-lg justify-content-center" id="reviewsPagination">
+                            <!-- Populated by JavaScript -->
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -892,6 +981,15 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Pagination Section for Sales Tab -->
+                <div class="pagination-container text-center mt-4">
+                    <nav aria-label="Navigazione pagine vendite">
+                        <ul class="pagination pagination-lg justify-content-center" id="salesPagination">
+                            <!-- Populated by JavaScript -->
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
@@ -918,6 +1016,11 @@
                 <i class="fas fa-chart-line me-2"></i>
                 Vendite: <strong><%= sales != null ? sales.size() : "null" %></strong>
             </div>
+        </div>
+        <div class="debug-item" style="background-color: rgba(156, 39, 176, 0.3);">
+            <i class="fas fa-filter me-2"></i>
+            Pagina corrente: <strong><%= request.getAttribute("currentPage") != null ? request.getAttribute("currentPage") : "1" %></strong>
+
         </div>
     </div>
 </div>

@@ -10,6 +10,9 @@ public class Game {
     private String developer;
     private String rating;
 
+    public Game() {
+    }
+
     public Game(String idGame, String name, String platform, int yearOfRelease,
                 String genre, String publisher, String developer, String rating) {
         this.idGame = idGame;
