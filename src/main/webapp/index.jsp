@@ -222,6 +222,18 @@
             border: none;
         }
 
+        .btn-add-review {
+            background-color: var(--review-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-add-sales {
+            background-color: var(--sales-color);
+            color: white;
+            border: none;
+        }
+
         .btn-delete {
             background-color: #f44336;
             color: white;
@@ -231,6 +243,16 @@
         .btn-edit:hover {
             background-color: #5e35b1;
             transform: rotate(15deg);
+        }
+
+        .btn-add-review:hover {
+            background-color: #388e3c;
+            transform: rotate(15deg);
+        }
+
+        .btn-add-sales:hover {
+            background-color: #f57c00;
+            transform: rotate(-15deg);
         }
 
         .btn-delete:hover {
@@ -616,13 +638,17 @@
                             <td><div class="rating-stars"><%= ratingStars %></div></td>
                             <td>
                                 <div class="d-flex">
-                                    <a href="GameDetails?id=<%= game.getIdGame() %>" class="btn btn-action" style="background-color: var(--accent-color); color: white;" data-bs-toggle="tooltip" title="Dettagli">
-                                        <i class="fas fa-info-circle"></i>
-                                    </a>
                                     <a href="Update?idGame=<%= game.getIdGame() %>" class="btn btn-action btn-edit" data-bs-toggle="tooltip" title="Modifica">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="Delete?idGame=<%= game.getIdGame() %>" class="btn btn-action btn-delete" onclick="return confirm('Sei sicuro di voler eliminare questo gioco?');" data-bs-toggle="tooltip" title="Elimina">
+                                    </a>
+                                    <a href="AddReview?idGame=<%= game.getIdGame() %>" class="btn btn-action btn-add-review" data-bs-toggle="tooltip" title="Aggiungi Recensione">
+                                        <i class="fas fa-star"></i>
+                                    </a>
+                                    <a href="AddSales?idGame=<%= game.getIdGame() %>" class="btn btn-action btn-add-sales" data-bs-toggle="tooltip" title="Registra Vendite">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </a>
+                                    <a href="Delete?action_type=game&idGame=<%= game.getIdGame() %>" class="btn btn-action btn-delete" onclick="return confirm('Sei sicuro di voler eliminare questo gioco e tutti i dati associati (recensioni, vendite)?');" data-bs-toggle="tooltip" title="Elimina">
                                         <i class="fas fa-trash-alt"></i>
                                     </a>
                                 </div>
@@ -667,6 +693,7 @@
                             <th>Conteggio Critica</th>
                             <th>Punteggio Utenti</th>
                             <th>Conteggio Utenti</th>
+                            <th>Azioni</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -701,6 +728,16 @@
                             <td><%= review.getCriticCount() %> recensioni</td>
                             <td class="<%= userScoreClass %>"><strong><%= review.getUserScore() %></strong>/10</td>
                             <td><%= review.getUserCount() %> recensioni</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a href="Update?idGame=<%= review.getIdGame()%>&view=review" class="btn btn-action btn-edit" data-bs-toggle="tooltip" title="Modifica">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="Delete?action_type=review&id_review=<%= review.getIdReview() %>&id_game=<%= review.getIdGame() %>" class="btn btn-action btn-delete" onclick="return confirm('Sei sicuro di voler eliminare questa recensione?');" data-bs-toggle="tooltip" title="Elimina">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
                         <%
                             }
@@ -742,6 +779,7 @@
                             <th>Giappone</th>
                             <th>Altre Regioni</th>
                             <th>Vendite Globali</th>
+                            <th>Azioni</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -765,6 +803,16 @@
                             <td><i class="fas fa-yen-sign me-1 text-danger"></i> <%= s.getJpSales() %> mil</td>
                             <td><i class="fas fa-globe-asia me-1 text-info"></i> <%= s.getOtherSales() %> mil</td>
                             <td><strong><i class="fas fa-globe me-1 text-warning"></i> <%= s.getGlobalSales() %> mil</strong></td>
+                            <td>
+                                <div class="d-flex">
+                                    <a href="Update?idSale=<%= s.getIdSales() %>" class="btn btn-action btn-edit" data-bs-toggle="tooltip" title="Modifica">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="Delete?idSale=<%= s.getIdSales() %>" class="btn btn-action btn-delete" onclick="return confirm('Sei sicuro di voler eliminare questo saldo?');" data-bs-toggle="tooltip" title="Elimina">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
                         <%
                             }
@@ -929,6 +977,7 @@
                             <th>Conteggio Critica</th>
                             <th>Punteggio Utenti</th>
                             <th>Conteggio Utenti</th>
+                            <th>Azioni</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -974,6 +1023,7 @@
                             <th>Giappone</th>
                             <th>Altre Regioni</th>
                             <th>Vendite Globali</th>
+                            <th>Azioni</th>
                         </tr>
                         </thead>
                         <tbody>

@@ -50,7 +50,7 @@ public class SalesDAO {
         }
     }
 
-
+//probabilmente non ha senso
     public void deleteSales(String sales_id){
         try {
             DeleteResult result = collection.deleteOne(Filters.eq("id_sales", sales_id));
@@ -100,6 +100,8 @@ public class SalesDAO {
             return false;
         }
     }
+
+
     public ArrayList<Sales> getSalesPaginated(int skip, int limit) {
         ArrayList<Sales> salesList = new ArrayList<>();
 
