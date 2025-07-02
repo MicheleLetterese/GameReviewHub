@@ -3,6 +3,8 @@
 <%@ page import="Model.Game" %>
 <%@ page import="Model.Review" %>
 <%@ page import="Model.Sales" %>
+<%@ page import="org.bson.Document" %>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -499,6 +501,8 @@
             background: #5e35b1;
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 <body>
 
@@ -542,6 +546,47 @@
 </div>
 
 <div class="container">
+
+    <!-- 🔍 Sezione filtro -->
+    <div class="section fade-in-delay-1" id="search-filter-section">
+        <div class="section-title">
+            <div class="section-icon" style="background-color: #607d8b;">
+                <i class="fas fa-filter"></i>
+            </div>
+            <h2>Filtra Giochi</h2>
+        </div>
+
+        <!-- 💡 Qui inserisci il tuo form -->
+        <form id="search-form" action="RicercaGioco" method="post">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-server"></i></span>
+                        <input name="platform" class="form-control" placeholder="Piattaforma (es: X360)" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-star"></i></span>
+                        <input name="minUserScore" class="form-control" placeholder="Punteggio Utente minimo (es: 8.0)" required>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-submit">
+                    <i class="fas fa-search me-1"></i> Filtra
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 🔽 Risultati filtrati -->
+    <div id="searchResults">
+        <% if (request.getAttribute("risultati") != null) { %>
+        <jsp:include page="sezione_risultati.jsp" />
+        <% } %>
+    </div>
+
     <!-- Main Tabs Navigation -->
     <ul class="nav nav-tabs fade-in-delay-1" id="mainTabs" role="tablist">
         <li class="nav-item" role="presentation">
@@ -1194,5 +1239,62 @@
         animateSections();
     });
 </script>
+
+<script>
+    $(document).ready(function () {
+        $("#search-form").on("submit", function (e) {
+            e.preventDefault();
+
+            const platform = $("input[name='platform']").val().trim();
+            const minUserScore = $("input[name='minUserScore']").val().trim();
+
+            if (!platform || !minUserScore) {
+                alert("Compila tutti i campi.");
+                return;
+            }
+
+            $.ajax({
+                url: "RicercaGioco",
+                method: "POST",
+                data: {
+                    platform: platform,
+                    minUserScore: minUserScore,
+                    page: 1
+                },
+                success: function (data) {
+                    $("#searchResults").html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Errore AJAX:", error);
+                    alert("Errore durante la richiesta.");
+                }
+            });
+        });
+
+        $(document).on("click", ".page-button", function () {
+            const page = $(this).data("page");
+            const platform = $(this).data("platform");
+            const score = $(this).data("score");
+
+            $.ajax({
+                url: "RicercaGioco",
+                method: "POST",
+                data: {
+                    platform: platform,
+                    minUserScore: score,
+                    page: page
+                },
+                success: function (data) {
+                    $("#searchResults").html(data);
+                },
+                error: function () {
+                    alert("Errore durante la paginazione.");
+                }
+            });
+        });
+    });
+</script>
+
+
 </body>
 </html>
