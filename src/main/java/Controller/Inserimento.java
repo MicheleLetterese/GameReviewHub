@@ -13,7 +13,7 @@ import java.io.IOException;
 @WebServlet("/Inserimento")
 public class Inserimento extends HttpServlet {
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response){
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/inserimento.jsp");
         try {
             requestDispatcher.forward(request, response);
@@ -24,7 +24,7 @@ public class Inserimento extends HttpServlet {
         }
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response){
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         Game game = new Game(
                 request.getParameter("idGame"),
                 request.getParameter("name"),
@@ -53,7 +53,7 @@ public class Inserimento extends HttpServlet {
                 Double.parseDouble(request.getParameter("jpSales")),
                 Double.parseDouble(request.getParameter("otherSales")),
                 Double.parseDouble(request.getParameter("globalSales"))
-                );
+        );
 
         GameDAO gameDAO = new GameDAO();
         ReviewDAO reviewDAO = new ReviewDAO();
@@ -63,7 +63,17 @@ public class Inserimento extends HttpServlet {
         reviewDAO.insertReview(review, game.getIdGame());
         salesDAO.insertSales(sales, game.getIdGame());
 
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/index.jsp");
+        try {
+
+            response.sendRedirect(request.getContextPath() + "/hello-servlet");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+
+        /*RequestDispatcher requestDispatcher = request.getRequestDispatcher("/index.jsp");
+
         try {
             requestDispatcher.forward(request, response);
         } catch (ServletException e) {
@@ -72,4 +82,4 @@ public class Inserimento extends HttpServlet {
             throw new RuntimeException(e);
         }
     }
-}
+}*/

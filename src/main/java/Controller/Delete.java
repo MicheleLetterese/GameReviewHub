@@ -24,7 +24,7 @@ public class Delete extends HttpServlet {
 
         @Override
         protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            processRequest(request, response); // Process POST requests the same way as GET
+            processRequest(request, response);
         }
 
         private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -44,7 +44,7 @@ public class Delete extends HttpServlet {
                 return;
             }
 
-            ReviewDAO reviewDAO = new ReviewDAO(); // Common DAO, might be needed for both
+            ReviewDAO reviewDAO = new ReviewDAO();
             SalesDAO salesDAO = new SalesDAO();
 
             if ("game".equalsIgnoreCase(actionType)) {
@@ -103,17 +103,16 @@ public class Delete extends HttpServlet {
                         operationMessage = "Errore durante l'eliminazione della recensione: " + e.getMessage();
                     }
                 } else {
+
                     System.out.println("ID della recensione non fornito per l'eliminazione.");
                     operationMessage = "ID della recensione non fornito o non valido per l'eliminazione.";
                 }
-
 
                 if (gameIdForRedirect != null && !gameIdForRedirect.trim().isEmpty()) {
                     redirectURL = request.getContextPath() + "/hello-servlet";
                     System.out.println("Redirect URL per eliminazione recensione impostato a: " + redirectURL);
                 } else {
                     System.out.println("Game ID per redirect non fornito dopo eliminazione recensione. Si userà il default.");
-
                 }
 
             } else if ("sales".equalsIgnoreCase(actionType)){
@@ -147,14 +146,12 @@ public class Delete extends HttpServlet {
 
                 }
 
-
-
             } else {
                 System.out.println("Azione non valida: " + actionType);
                 operationMessage = "Azione di eliminazione non riconosciuta.";
             }
 
-            // Set messages and redirect
+
             if (success) {
                 request.getSession().setAttribute("successMessage", operationMessage);
             } else {

@@ -59,8 +59,8 @@ public class ReviewDAO {
             if(result.getDeletedCount() == 0){
                 throw new RuntimeException("Nessuna review trovata con ID: " + id_review);
             }
-            System.out.println("DEBUG: Eliminazione del review con ID: " + id_review);
-            System.out.println("DEBUG: Eliminazione del review con ID: " + id_review + " (ID numerico: " + numericId + ")");
+            //System.out.println("DEBUG: Eliminazione del review con ID: " + id_review);
+            System.out.println("DEBUG: Eliminazione review  ID: " + id_review + " ID numerico: " + numericId + ")");
         }catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException("Errore durante l'eliminazione del review", e);
@@ -175,7 +175,7 @@ public class ReviewDAO {
             try {
                 numericIdReview = Integer.parseInt(review.getIdReview());
             } catch (NumberFormatException e) {
-                System.err.println("ERRORE: l'ID della review non è un numero valido: " + review.getIdReview());
+                System.err.println("ID non valido: " + review.getIdReview());
                 return false;
             }
             Document updatedValues = new Document()
@@ -188,7 +188,7 @@ public class ReviewDAO {
                     Filters.eq("id_review", numericIdReview),
                     new Document("$set", updatedValues)
             );
-            return result.getModifiedCount() > 0 || (result.getMatchedCount() > 0 && result.getModifiedCount() == 0); // Successo se modificato o se già aggiornato
+            return result.getModifiedCount() > 0 || (result.getMatchedCount() > 0 && result.getModifiedCount() == 0);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -256,7 +256,9 @@ public class ReviewDAO {
             throw new RuntimeException("Errore durante il conteggio delle recensioni");
         }
     }
-/*
+
+
+
     public ArrayList<Review> getAllReview() {
         ArrayList<Review> reviews = new ArrayList<>();
 
@@ -306,6 +308,6 @@ public class ReviewDAO {
 
         return reviews;
     }
-*/
+
 
 }

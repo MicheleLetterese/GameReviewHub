@@ -50,14 +50,18 @@ public class SalesDAO {
         }
     }
 
-//probabilmente non ha senso
+
     public void deleteSales(String sales_id){
         try {
-            DeleteResult result = collection.deleteOne(Filters.eq("id_sales", sales_id));
+            int numId = Integer.parseInt(sales_id);
+
+            DeleteResult result = collection.deleteOne(Filters.eq("id_sales", numId));
+
             if(result.getDeletedCount() == 0){
                 throw new RuntimeException("Nessun saldo trovato con ID: " + sales_id);
             }
-            System.out.println("DEBUG: Eliminazione saldo trovato: " + sales_id);
+
+            System.out.println("DEBUG: Eliminazione saldo trovato: " + sales_id + "id num" + numId + "!!!");
         }catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException("Errore durante l'eliminazione del sales");
@@ -83,6 +87,13 @@ public class SalesDAO {
             return false;
         }
         try {
+            int numIdSaldo;
+            try{
+                numIdSaldo=Integer.parseInt(sales.getIdSales());
+            }catch (NumberFormatException e){
+                System.err.println("ERR, id non valido");
+                return  false;
+            }
             Document updatedValues = new Document()
                     .append("na_sales", sales.getNaSales())
                     .append("eu_sales", sales.getEuSales())
@@ -91,7 +102,7 @@ public class SalesDAO {
                     .append("global_sales", sales.getGlobalSales());
 
             UpdateResult result= collection.updateOne(
-                    Filters.eq("id_sales", sales.getIdSales()),
+                    Filters.eq("id_sales", numIdSaldo),
                     new Document("$set", updatedValues)
             );
             return result.getModifiedCount() > 0 || (result.getMatchedCount() > 0 && result.getModifiedCount() == 0);
@@ -100,6 +111,103 @@ public class SalesDAO {
             return false;
         }
     }
+
+
+
+    public Sales getSaleByGameId(String game_id) {
+
+        if (game_id == null || game_id.trim().isEmpty()) {
+            System.err.println("ERRORE: game_id fornito per la ricerca è nullo o vuoto.");
+            return null;
+        }
+
+        try {
+            int numericGameId = Integer.parseInt(game_id);
+
+            Document doc = collection.find(Filters.eq("id_game", numericGameId)).first();
+            //trovato
+            if (doc != null) {
+
+                String idSale = String.valueOf(doc.get("id_sales"));
+                String idGameFound = String.valueOf(doc.get("id_game"));
+
+                Object object; // Variabile di appoggio per il valore letto dal DB
+
+                object = doc.get("na_sales");
+                double naSales;
+                if (object instanceof String) {
+                    naSales = 0;
+                } else if (object instanceof Number) {
+                    naSales = ((Number) object).doubleValue();
+                } else {
+                    naSales = 0;
+                }
+
+                // Gestione di euSales
+                object = doc.get("eu_sales");
+                double euSales;
+                if (object instanceof String) {
+                    euSales = 0;
+                } else if (object instanceof Number) {
+                    euSales = ((Number) object).doubleValue();
+                } else {
+                    euSales = 0;
+                }
+
+                // jp sales
+                object = doc.get("jp_sales");
+                double jpSale;
+                if (object instanceof String) {
+                    jpSale = 0;
+                } else if (object instanceof Number) {
+                    jpSale = ((Number) object).doubleValue();
+                } else {
+                    jpSale = 0;
+                }
+
+
+
+                object = doc.get("other_sales");
+                double otherSale;
+                if (object instanceof String) {
+                    otherSale = 0;
+                } else if (object instanceof Number) {
+                    otherSale = ((Number) object).doubleValue();
+                } else {
+                    otherSale = 0;
+                }
+
+
+                object = doc.get("global_sales");
+                double globalSale;
+                if (object instanceof String) {
+                    globalSale = 0;
+                } else if (object instanceof Number) {
+                    globalSale = ((Number) object).doubleValue();
+                } else {
+                    globalSale = 0;
+                }
+
+                System.out.println("DEBUG: Trovata review con ID: " + idSale + " per game ID: " + game_id);
+
+                return new Sales(idSale, idGameFound, naSales, euSales, jpSale, otherSale, globalSale);
+
+            } else {
+
+                System.out.println("DEBUG: Nessuna review trovata per game ID: " + game_id);
+                return null;
+            }
+
+        } catch (NumberFormatException e) {
+            System.err.println("ERRORE: L'ID del gioco fornito non è un numero valido: " + game_id);
+            throw new RuntimeException("Formato ID del gioco non valido: " + game_id, e);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Errore durante il recupero della review per game ID: " + game_id, e);
+        }
+    }
+
 
 
     public ArrayList<Sales> getSalesPaginated(int skip, int limit) {

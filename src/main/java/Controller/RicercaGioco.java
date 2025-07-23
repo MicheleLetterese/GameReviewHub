@@ -1,14 +1,12 @@
 package Controller;
 
 import Model.GameDAO;
-import org.bson.Document;
-
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.bson.Document;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,4 +44,3 @@ public class RicercaGioco extends HttpServlet {
         request.getRequestDispatcher("/sezione_risultati.jsp").forward(request, response);
     }
 }
-

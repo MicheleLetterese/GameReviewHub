@@ -1,9 +1,6 @@
 package Controller;
 
-import Model.Game;
-import Model.GameDAO;
-import Model.Review;
-import Model.ReviewDAO;
+import Model.*;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -24,12 +21,14 @@ import java.util.Date;
 public class Update extends HttpServlet {
     private GameDAO gameDAO;
     private ReviewDAO reviewDAO;
+    private SalesDAO salesDAO;
 
     @Override
     public void init() throws ServletException {
         super.init();
         gameDAO = new GameDAO();
         this.reviewDAO = new ReviewDAO();
+        this.salesDAO = new SalesDAO();
         System.out.println("[INIT] GameDAO e ReviewDAO inizializzati");
     }
 
@@ -42,16 +41,16 @@ public class Update extends HttpServlet {
 
         String viewMode = request.getParameter("view");
 
-        //  Se 'view' è 'review', form recensione.
         if ("review".equals(viewMode)) {
             request.setAttribute("currentView", "review");
             System.out.println("[GET] Richiesta vista specifica per la recensione.");
+        } else if ("sales".equals(viewMode)) {
+            request.setAttribute("currentView", "sales");
+            System.out.println("[GET] Richiesta vista specifica per le vendite.");
         } else {
-            request.setAttribute("currentView", "game"); // Default view
+            request.setAttribute("currentView", "game"); // Vista di default
             System.out.println("[GET] Richiesta vista standard (gioco).");
         }
-
-
 
         String idGameToEdit = request.getParameter("idGame");
         System.out.println("[GET] id_game ricevuto: " + idGameToEdit);
@@ -63,6 +62,7 @@ public class Update extends HttpServlet {
             try {
                 Game game = gameDAO.getGameById(idGameToEdit);
                 Review review = reviewDAO.getReviewByGameId(idGameToEdit);
+                Sales sales = salesDAO.getSaleByGameId(idGameToEdit);
 
                 if (game != null) {
                     System.out.println("[GET] Gioco trovato: " + game.getName());
@@ -70,6 +70,12 @@ public class Update extends HttpServlet {
                     if (review != null) {
                         System.out.println("[GET] Recensione trovata");
                         request.setAttribute("review", review);
+                        if(sales != null){
+                            System.out.println("[Get] saldo trovato");
+                            request.setAttribute("sales", sales);
+                        }else {
+                            System.out.println("[GET] ATTENZIONE: Nessun dato di vendita trovato per il gioco ID: " + idGameToEdit);
+                        }
                     } else {
                         System.out.println("[GET] ATTENZIONE: Nessuna review trovata per il gioco ID: " + idGameToEdit);
                         request.setAttribute("review", null); // Imposta a null se non trovata
@@ -100,11 +106,11 @@ public class Update extends HttpServlet {
             handleUpdateGame(request, response);
         } else if ("updateReview".equals(action)) {
             handleUpdateReview(request, response);
+        } else if ("updateSale".equals(action)) {
+            handleUpdateSales(request, response);
         } else {
-            // Caso di errore: nessuna azione specificata o azione non valida
             System.out.println("[POST] Azione non valida o non specificata.");
             request.setAttribute("errorMessage", "Azione richiesta non valida.");
-            // Ricarica la pagina di modifica con un messaggio di errore
             doGet(request, response);
         }
     }
@@ -184,12 +190,10 @@ public class Update extends HttpServlet {
         reviewToUpdate.setIdGame(idGame);
 
         try {
-
             reviewToUpdate.setCriticScore(Double.parseDouble(criticScoreStr));
             reviewToUpdate.setCriticCount(Double.parseDouble(criticCountStr));
             reviewToUpdate.setUserScore(Double.parseDouble(userScoreStr));
             reviewToUpdate.setUserCount(Double.parseDouble(userCountStr));
-
 
             boolean success = reviewDAO.updateReview(reviewToUpdate);
 
@@ -197,8 +201,7 @@ public class Update extends HttpServlet {
                 System.out.println("[POST-Review] Recensione con ID: " + idReview + " aggiornata con successo.");
                 HttpSession session = request.getSession();
                 session.setAttribute("flashSuccessMessage", "Recensione per il gioco aggiornata con successo!");
-                // Reindirizza alla pagina di modifica per vedere i risultati, oppure alla lista principale
-                response.sendRedirect(request.getContextPath() + "/Update?idGame=" + idGame);
+                response.sendRedirect(request.getContextPath() + "/Update?idGame=" + idGame+ "&view=review");
             } else {
                 System.out.println("[POST-Review] L'aggiornamento della recensione non ha modificato alcun documento.");
                 request.setAttribute("errorMessage", "Nessuna modifica effettuata. I dati potrebbero essere già aggiornati.");
@@ -215,6 +218,63 @@ public class Update extends HttpServlet {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Errore critico durante l'aggiornamento della recensione: " + e.getMessage());
             request.setAttribute("review", reviewToUpdate);
+            doGet(request, response);
+        }
+    }
+
+    private void handleUpdateSales(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        System.out.println("[POST-Review] Inizio aggiornamento saldo.");
+        String idSale = request.getParameter("idSale");
+        String idGame = request.getParameter("idGame");
+
+        //saldo
+        String naSales = request.getParameter("naSales");
+        String euSales = request.getParameter("euSales");
+        String jpSales = request.getParameter("jpSales");
+        String otherSales = request.getParameter("otherSales");
+        String globalSales = request.getParameter("globalSales");
+
+        if (idSale == null || idSale.trim().isEmpty() || idGame == null || idGame.trim().isEmpty()) {
+            request.setAttribute("errorMessage", "ID saldo o ID Gioco mancanti. Impossibile aggiornare.");
+            doGet(request, response);
+            return;
+        }
+
+        Sales saleToUpdate = new Sales();
+        saleToUpdate.setIdSales(idSale);
+        saleToUpdate.setIdGame(idGame);
+
+        try {
+            saleToUpdate.setNaSales(Double.parseDouble(naSales));
+            saleToUpdate.setEuSales(Double.parseDouble(euSales));
+            saleToUpdate.setJpSales(Double.parseDouble(jpSales));
+            saleToUpdate.setOtherSales(Double.parseDouble(otherSales));
+            saleToUpdate.setGlobalSales(Double.parseDouble(globalSales));
+
+            boolean success = salesDAO.updateSales(saleToUpdate);
+
+
+            if (success) {
+                System.out.println("[POST-Saldo] Saldo ID: " + idSale + " aggiornata con successo.");
+                HttpSession session = request.getSession();
+                session.setAttribute("flashSuccessMessage", "Saldo per il gioco aggiornata con successo!");
+                response.sendRedirect(request.getContextPath() + "/Update?idGame=" + idGame + "&view=sales");
+            } else {
+                System.out.println("[POST-Saldo] L'aggiornamento dell saldo non ha modificato alcun documento.");
+                request.setAttribute("errorMessage", "Nessuna modifica effettuata");
+                doGet(request, response);
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("[POST-Saldo] Errore di formato numerico: " + e.getMessage());
+            request.setAttribute("errorMessage", "errore numerico");
+            request.setAttribute("sales", saleToUpdate);
+            doGet(request, response);
+        } catch (Exception e) {
+            System.out.println("[POST-Saldo] Errore durante l'aggiornamento della recensione: " + e.getMessage());
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "Errore aggiornamento saldo: " + e.getMessage());
+            request.setAttribute("sales", saleToUpdate);
             doGet(request, response);
         }
     }

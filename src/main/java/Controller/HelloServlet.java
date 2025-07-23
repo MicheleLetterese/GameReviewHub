@@ -48,6 +48,10 @@ public class HelloServlet extends HttpServlet {
         int totalReviewPages = (int) Math.ceil((double) totalReviews / LIMIT);
         int totalSalesPages = (int) Math.ceil((double) totalSales / LIMIT);
 
+        //per tabella
+        ArrayList<Game> allGames = gameDAO.getAllGames();
+        ArrayList<Review> allReviews = reviewDAO.getAllReview();
+
         // Imposta gli attributi per la richiesta
         request.setAttribute("games", games);
         request.setAttribute("reviews", reviews);
@@ -60,6 +64,9 @@ public class HelloServlet extends HttpServlet {
         request.setAttribute("games", games);
         request.setAttribute("reviews", reviews);
         request.setAttribute("sales", sales);
+
+        request.setAttribute("allGames", allGames);
+        request.setAttribute("allReviews", allReviews);
 
         try {
             RequestDispatcher requestDispatcher = request.getRequestDispatcher("/index.jsp");

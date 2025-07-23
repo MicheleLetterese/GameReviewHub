@@ -224,18 +224,6 @@
             border: none;
         }
 
-        .btn-add-review {
-            background-color: var(--review-color);
-            color: white;
-            border: none;
-        }
-
-        .btn-add-sales {
-            background-color: var(--sales-color);
-            color: white;
-            border: none;
-        }
-
         .btn-delete {
             background-color: #f44336;
             color: white;
@@ -245,16 +233,6 @@
         .btn-edit:hover {
             background-color: #5e35b1;
             transform: rotate(15deg);
-        }
-
-        .btn-add-review:hover {
-            background-color: #388e3c;
-            transform: rotate(15deg);
-        }
-
-        .btn-add-sales:hover {
-            background-color: #f57c00;
-            transform: rotate(-15deg);
         }
 
         .btn-delete:hover {
@@ -587,6 +565,7 @@
         <% } %>
     </div>
 
+    <div class="container">
     <!-- Main Tabs Navigation -->
     <ul class="nav nav-tabs fade-in-delay-1" id="mainTabs" role="tablist">
         <li class="nav-item" role="presentation">
@@ -686,13 +665,7 @@
                                     <a href="Update?idGame=<%= game.getIdGame() %>" class="btn btn-action btn-edit" data-bs-toggle="tooltip" title="Modifica">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    </a>
-                                    <a href="AddReview?idGame=<%= game.getIdGame() %>" class="btn btn-action btn-add-review" data-bs-toggle="tooltip" title="Aggiungi Recensione">
-                                        <i class="fas fa-star"></i>
-                                    </a>
-                                    <a href="AddSales?idGame=<%= game.getIdGame() %>" class="btn btn-action btn-add-sales" data-bs-toggle="tooltip" title="Registra Vendite">
-                                        <i class="fas fa-chart-bar"></i>
-                                    </a>
+
                                     <a href="Delete?action_type=game&idGame=<%= game.getIdGame() %>" class="btn btn-action btn-delete" onclick="return confirm('Sei sicuro di voler eliminare questo gioco e tutti i dati associati (recensioni, vendite)?');" data-bs-toggle="tooltip" title="Elimina">
                                         <i class="fas fa-trash-alt"></i>
                                     </a>
@@ -728,7 +701,11 @@
 
                 <div class="table-responsive">
                     <%
+
                         ArrayList<Review> reviews = (ArrayList<Review>) request.getAttribute("reviews");
+                        ArrayList<Game> allgames = (ArrayList<Game>) request.getAttribute("allGames");
+                        ArrayList<Review> allreviews = (ArrayList<Review>) request.getAttribute("allReviews");
+
                     %>
                     <table class="table table-custom table-reviews" id="reviewsTable">
                         <thead>
@@ -743,13 +720,14 @@
                         </thead>
                         <tbody>
                         <%
-                            if (reviews != null && !reviews.isEmpty()) {
-                                for (Review review : reviews) {
+                            if (allreviews != null && !allreviews.isEmpty()) {
+
+                                for (Review review : allreviews) {
                                     String gameName = "N/D";
-                                    if (games != null) {
-                                        for (Game game : games) {
+                                    if (allgames != null) {
+                                        for (Game game : allgames) {
                                             System.out.println("game: " + game.getName() + " con id: " + game.getIdGame() + " e idReview = " + review.getIdGame());
-                                            if (game.getIdGame() == review.getIdGame()) {
+                                            if (game.getIdGame().equals(review.getIdGame())) {
                                                 System.out.println("Entro nell'if. game.getIdGame() = " + game.getIdGame() + " review.getIdGame = " + review.getIdGame());
                                                 gameName = game.getName();
                                                 break;
@@ -834,7 +812,7 @@
                                     String gameName = "N/D";
                                     if (games != null) {
                                         for (Game game : games) {
-                                            if (game.getIdGame() == s.getIdGame()) {
+                                            if (game.getIdGame().equals( s.getIdGame())) {
                                                 gameName = game.getName();
                                                 break;
                                             }
@@ -850,10 +828,10 @@
                             <td><strong><i class="fas fa-globe me-1 text-warning"></i> <%= s.getGlobalSales() %> mil</strong></td>
                             <td>
                                 <div class="d-flex">
-                                    <a href="Update?idSale=<%= s.getIdSales() %>" class="btn btn-action btn-edit" data-bs-toggle="tooltip" title="Modifica">
+                                    <a href="Update?idGame=<%= s.getIdGame()%>&view=sales" class="btn btn-action btn-edit" data-bs-toggle="tooltip" title="Modifica">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="Delete?idSale=<%= s.getIdSales() %>" class="btn btn-action btn-delete" onclick="return confirm('Sei sicuro di voler eliminare questo saldo?');" data-bs-toggle="tooltip" title="Elimina">
+                                    <a href="Delete?action_type=sales&id_sales=<%= s.getIdSales() %>&id_game=<%= s.getIdGame() %>" class="btn btn-action btn-delete" onclick="return confirm('Sei sicuro di voler eliminare questo saldo?');" data-bs-toggle="tooltip" title="Elimina">
                                         <i class="fas fa-trash-alt"></i>
                                     </a>
                                 </div>
@@ -872,77 +850,77 @@
                 </div>
             </div>
 
-        <!-- Pagination Section -->
-        <div class="section fade-in-delay-3">
-            <div class="pagination-container text-center">
-                <%
-                    int currentPage = (Integer) request.getAttribute("currentPage");
-                    int totalGamePages = (Integer) request.getAttribute("totalGamePages");
-                    // Utilizziamo il numero maggiore di pagine tra le tre tabelle per la paginazione
-                    int maxPages = Math.max(totalGamePages,
-                            Math.max((Integer) request.getAttribute("totalReviewPages"),
-                                    (Integer) request.getAttribute("totalSalesPages")));
-                %>
-                <nav aria-label="Navigazione pagine">
-                    <ul class="pagination pagination-lg justify-content-center">
-                        <!-- Previous button -->
-                        <li class="page-item <%= currentPage == 1 ? "disabled" : "" %>">
-                            <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Precedente">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
+            <!-- Pagination Section -->
+            <div class="section fade-in-delay-3">
+                <div class="pagination-container text-center">
+                    <%
+                        int currentPage = (Integer) request.getAttribute("currentPage");
+                        int totalGamePages = (Integer) request.getAttribute("totalGamePages");
+                        // Utilizziamo il numero maggiore di pagine tra le tre tabelle per la paginazione
+                        int maxPages = Math.max(totalGamePages,
+                                Math.max((Integer) request.getAttribute("totalReviewPages"),
+                                        (Integer) request.getAttribute("totalSalesPages")));
+                    %>
+                    <nav aria-label="Navigazione pagine">
+                        <ul class="pagination pagination-lg justify-content-center">
+                            <!-- Previous button -->
+                            <li class="page-item <%= currentPage == 1 ? "disabled" : "" %>">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Precedente">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
 
-                        <!-- First page button -->
-                        <li class="page-item <%= currentPage == 1 ? "active" : "" %>">
-                            <a class="page-link" href="?page=1">1</a>
-                        </li>
+                            <!-- First page button -->
+                            <li class="page-item <%= currentPage == 1 ? "active" : "" %>">
+                                <a class="page-link" href="?page=1">1</a>
+                            </li>
 
-                        <!-- Ellipsis for many pages before -->
-                        <% if (currentPage > 4) { %>
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
-                        <% } %>
+                            <!-- Ellipsis for many pages before -->
+                            <% if (currentPage > 4) { %>
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                            <% } %>
 
-                        <!-- Show 2 pages before and 2 pages after current page -->
-                        <%
-                            for (int i = Math.max(2, currentPage - 2); i <= Math.min(maxPages - 1, currentPage + 2); i++) {
-                                if (i == 1 || i == maxPages) continue; // Skip first and last page as they're displayed separately
-                        %>
-                        <li class="page-item <%= currentPage == i ? "active" : "" %>">
-                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                        </li>
-                        <% } %>
+                            <!-- Show 2 pages before and 2 pages after current page -->
+                            <%
+                                for (int i = Math.max(2, currentPage - 2); i <= Math.min(maxPages - 1, currentPage + 2); i++) {
+                                    if (i == 1 || i == maxPages) continue; // Skip first and last page as they're displayed separately
+                            %>
+                            <li class="page-item <%= currentPage == i ? "active" : "" %>">
+                                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                            </li>
+                            <% } %>
 
-                        <!-- Ellipsis for many pages after -->
-                        <% if (currentPage < maxPages - 3) { %>
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
-                        <% } %>
+                            <!-- Ellipsis for many pages after -->
+                            <% if (currentPage < maxPages - 3) { %>
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                            <% } %>
 
-                        <!-- Last page button (if more than 1 page) -->
-                        <% if (maxPages > 1) { %>
-                        <li class="page-item <%= currentPage == maxPages ? "active" : "" %>">
-                            <a class="page-link" href="?page=<%= maxPages %>"><%= maxPages %></a>
-                        </li>
-                        <% } %>
+                            <!-- Last page button (if more than 1 page) -->
+                            <% if (maxPages > 1) { %>
+                            <li class="page-item <%= currentPage == maxPages ? "active" : "" %>">
+                                <a class="page-link" href="?page=<%= maxPages %>"><%= maxPages %></a>
+                            </li>
+                            <% } %>
 
-                        <!-- Next button -->
-                        <li class="page-item <%= currentPage == maxPages ? "disabled" : "" %>">
-                            <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Successivo">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+                            <!-- Next button -->
+                            <li class="page-item <%= currentPage == maxPages ? "disabled" : "" %>">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Successivo">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
 
-                <div class="pagination-info text-muted mt-2">
-                    Pagina <%= currentPage %> di <%= maxPages %>
+                    <div class="pagination-info text-muted mt-2">
+                        Pagina <%= currentPage %> di <%= maxPages %>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
         <!-- Individual Tab Contents -->
         <div class="tab-pane fade" id="games-tab-content" role="tabpanel">
@@ -1240,61 +1218,60 @@
     });
 </script>
 
-<script>
-    $(document).ready(function () {
-        $("#search-form").on("submit", function (e) {
-            e.preventDefault();
+    <script>
+        $(document).ready(function () {
+            $("#search-form").on("submit", function (e) {
+                e.preventDefault();
 
-            const platform = $("input[name='platform']").val().trim();
-            const minUserScore = $("input[name='minUserScore']").val().trim();
+                const platform = $("input[name='platform']").val().trim();
+                const minUserScore = $("input[name='minUserScore']").val().trim();
 
-            if (!platform || !minUserScore) {
-                alert("Compila tutti i campi.");
-                return;
-            }
-
-            $.ajax({
-                url: "RicercaGioco",
-                method: "POST",
-                data: {
-                    platform: platform,
-                    minUserScore: minUserScore,
-                    page: 1
-                },
-                success: function (data) {
-                    $("#searchResults").html(data);
-                },
-                error: function (xhr, status, error) {
-                    console.error("Errore AJAX:", error);
-                    alert("Errore durante la richiesta.");
+                if (!platform || !minUserScore) {
+                    alert("Compila tutti i campi.");
+                    return;
                 }
+
+                $.ajax({
+                    url: "RicercaGioco",
+                    method: "POST",
+                    data: {
+                        platform: platform,
+                        minUserScore: minUserScore,
+                        page: 1
+                    },
+                    success: function (data) {
+                        $("#searchResults").html(data);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Errore AJAX:", error);
+                        alert("Errore durante la richiesta.");
+                    }
+                });
+            });
+
+            $(document).on("click", ".page-button", function () {
+                const page = $(this).data("page");
+                const platform = $(this).data("platform");
+                const score = $(this).data("score");
+
+                $.ajax({
+                    url: "RicercaGioco",
+                    method: "POST",
+                    data: {
+                        platform: platform,
+                        minUserScore: score,
+                        page: page
+                    },
+                    success: function (data) {
+                        $("#searchResults").html(data);
+                    },
+                    error: function () {
+                        alert("Errore durante la paginazione.");
+                    }
+                });
             });
         });
-
-        $(document).on("click", ".page-button", function () {
-            const page = $(this).data("page");
-            const platform = $(this).data("platform");
-            const score = $(this).data("score");
-
-            $.ajax({
-                url: "RicercaGioco",
-                method: "POST",
-                data: {
-                    platform: platform,
-                    minUserScore: score,
-                    page: page
-                },
-                success: function (data) {
-                    $("#searchResults").html(data);
-                },
-                error: function () {
-                    alert("Errore durante la paginazione.");
-                }
-            });
-        });
-    });
-</script>
-
+    </script>
 
 </body>
 </html>

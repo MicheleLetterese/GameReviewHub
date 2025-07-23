@@ -24,7 +24,7 @@
             <version>5.0.0</version>
             <scope>provided</scope>
         </dependency>
-        <!-- AGGIUNGI QUESTO BLOCCO -->
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -42,14 +42,13 @@
             <artifactId>mongodb-driver-sync</artifactId>
             <version>5.3.0</version>
         </dependency>
-        <!-- 1. La dipendenza API (quella che ti manca) -->
+
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
             <version>3.0.0</version>
         </dependency>
 
-        <!-- 2. La dipendenza di implementazione (che probabilmente hai già) -->
         <dependency>
             <groupId>org.glassfish.web</groupId>
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
